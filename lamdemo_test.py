@@ -41,6 +41,7 @@ mask_name = 'a0038_1.png'
 mask_path = './test_images/harmonization/' + mask_name
 """
 
+"""
 fig_name = 'a1035.jpg'
 fig_path = './test_images/harmonization/' + fig_name
 
@@ -48,6 +49,15 @@ lr_name = 'a1035_1_5.jpg'
 lr_path = './test_images/harmonization/' + lr_name
 
 mask_name = 'a1035_1.png'
+mask_path = './test_images/harmonization/' + mask_name
+"""
+fig_name = 'a0423.jpg'
+fig_path = './test_images/harmonization/' + fig_name
+
+lr_name = 'a0423_1_4.jpg'
+lr_path = './test_images/harmonization/' + lr_name
+
+mask_name = 'a0423_1.png'
 mask_path = './test_images/harmonization/' + mask_name
 
 img_hr = Image.open(fig_path)
@@ -68,7 +78,7 @@ cv2_lr = np.moveaxis(tensor_lr.numpy(), 0, 2) ; cv2_hr = np.moveaxis(tensor_hr.n
 plt.figure(1)
 plt.imshow(cv2_hr)
 
-w = 90  # The x coordinate of your select patch, 125 as an example
+w = 100  # The x coordinate of your select patch, 125 as an example
 h = 100  # The y coordinate of your select patch, 160 as an example
          # And check the red box
          # Is your selected patch this one? If not, adjust the `w` and `h`.
@@ -87,7 +97,7 @@ attr_objective = attribution_objective(attr_grad, h, w, window=window_size)
 gaus_blur_path_func = GaussianBlurPath(sigma, fold, l)
 interpolated_grad_numpy, result_numpy, interpolated_numpy = Path_gradient(tensor_lr.numpy(), model, attr_objective, gaus_blur_path_func, cuda=True)
 grad_numpy, result = saliency_map(interpolated_grad_numpy[:,:3,:,:], result_numpy)
-abs_normed_grad_numpy = grad_abs_norm(grad_numpy)
+abs_normed_grad_numpy = grad_abs_norm(grad_numpy)*10
 saliency_image_abs = vis_saliency(abs_normed_grad_numpy,zoomin=1)
 
 """
@@ -104,8 +114,8 @@ pil = make_pil_grid(
 """
 saliency_save_path = './test_images/harmonization/output/' + model_name + fig_name
 saliency_image_abs.save(saliency_save_path)
-#plt.figure(3)
-#plt.imshow(pil)
+plt.figure(3)
+plt.imshow(saliency_image_abs)
 gini_index = gini(abs_normed_grad_numpy)
 diffusion_index = (1 - gini_index) * 100
 print(f"The DI of this case is {diffusion_index}")
